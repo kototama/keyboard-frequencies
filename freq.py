@@ -32,10 +32,24 @@ def sort_by_freqs(freqs):
   l.sort(key=lambda x: x[1], reverse=True)
   return l
 
+def merge_freqs(all_freqs):
+  nb_freqs = len(all_freqs)
+  merged = defaultdict(lambda: 0.0)
+  for freqs in all_freqs:
+    for char, freq in freqs.iteritems():
+      merged[char] += freq
+  for char, freq in merged.iteritems():
+    merged[char] = merged[char] / nb_freqs
+  return merged
+
 def print_sorted_freqs(sorted_freqs):
   for f in sorted_freqs:
     print f[0], ' ', f[1]
 
 if __name__ == '__main__':
-  lines = open(sys.argv[1]).readlines()
-  print_sorted_freqs(sort_by_freqs(make_freqs(read_counts(lines))))
+  all_freqs = []
+  for file in sys.argv[1:]:
+    freqs = make_freqs(read_counts(open(file).readlines()))
+    all_freqs.append(freqs)
+  merged = merge_freqs(all_freqs)
+  print_sorted_freqs(sort_by_freqs(merged))
